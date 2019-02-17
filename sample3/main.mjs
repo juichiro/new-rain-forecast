@@ -43,8 +43,9 @@ async function requestGeoCoderAPI(query) {
  * @param {object} options 位置情報(lat, lng)を含んだパラメータ
  */
 function drawMap(map, options) {
-  const zoomLevel = 17;
-  map.drawMap(new Y.LatLng(options.lat, options.lng), zoomLevel, Y.LayerSetId.NORMAL);
+  const zoomLevel = 15;
+
+  map.drawMap(new Y.LatLng(options.lat, options.lng), zoomLevel,  Y.LayerSetId.NORMAL);
 }
 
 /**
@@ -64,7 +65,12 @@ function parseCoordinates(str) {
  */
 async function main() {
   // 地図を初期化
-  const map = new Y.Map('map');
+  //ドキュメントを見て追加した　元は varではなくconstだった
+  var map = new Y.Map("map", {
+    configure : {
+        weatherOverlay: true
+    }
+});
   drawMap(map, { lat: 35.68227528, lng: 139.73310240 });
   // コントロールの追加
   const sliderZoomControl = new Y.SliderZoomControlVertical();
@@ -84,8 +90,10 @@ async function main() {
         resultText.textContent = `場所: ${first.Name}, 緯度: ${lct.lat}, 経度: ${lct.lng}`;
         // 地図を移動してラベル追加
         drawMap(map, lct);
-        const label = new Y.Label(new Y.LatLng(lct.lat, lct.lng), first.Name);
+        const label = new Y.Label(new Y.LatLng(lct.lat, lct.lng),`緯度: ${lct.lat}, 経度: ${lct.lng}` );
         map.addFeature(label);
+        var marker = new Y.Marker(new Y.LatLng(lct.lat,lct.lng));
+        map.addFeature(marker);
       } else {
         resultText.textContent = '正しい住所を入力してください';
       }
